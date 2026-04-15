@@ -1,0 +1,39 @@
+name: Deploy Engine
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/engine/**'
+      - 'packages/@pauli/engine-api/**'
+      - 'packages/@pauli/shared/**'
+      - '.github/workflows/deploy-engine.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build engine app
+        run: pnpm --filter app-engine build
+
+      - name: Deploy to Vercel
+        run: |
+          npx vercel deploy apps/engine --prod \
+            --token=${{ secrets.VERCEL_TOKEN }} \
+            --scope=${{ secrets.VERCEL_ORG_ID }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
