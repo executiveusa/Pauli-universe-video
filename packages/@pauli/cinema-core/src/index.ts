@@ -17,3 +17,15 @@ export type {
   FluxOptions,
   FluxResult,
 } from "./flux-orchestrator";
+
+export { SeedanceClient } from "./seedance-client";
+export type {
+  SeedanceOptions,
+  SeedanceResult,
+} from "./seedance-client";
+
+export { KlingClient } from "./kling-client";
+export type {
+  KlingOptions,
+  KlingResult,
+} from "./kling-client";
