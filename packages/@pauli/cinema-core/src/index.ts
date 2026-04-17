@@ -35,3 +35,21 @@ export type {
   InterpolationOptions,
   ProcessResult,
 } from "./frame-processor";
+
+export { CostTracker } from "./cost-tracker";
+export type {
+  VideoCost,
+  CostEntry,
+} from "./cost-tracker";
+
+export { UDECScorer } from "./udec-scorer";
+export type {
+  UDECScore,
+  ScoringMetadata,
+} from "./udec-scorer";
+
+export { QualityGate } from "./quality-gate";
+export type {
+  QualityResult,
+  QualityGateConfig,
+} from "./quality-gate";
