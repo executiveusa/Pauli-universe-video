@@ -29,3 +29,9 @@ export type {
   KlingOptions,
   KlingResult,
 } from "./kling-client";
+
+export { FrameProcessor } from "./frame-processor";
+export type {
+  InterpolationOptions,
+  ProcessResult,
+} from "./frame-processor";
