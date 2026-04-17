@@ -53,3 +53,21 @@ export type {
   QualityResult,
   QualityGateConfig,
 } from "./quality-gate";
+
+export { HiggsfieldClient } from "./higgsfield-client";
+export type {
+  HiggsfieldOptions,
+} from "./higgsfield-client";
+
+export { ColorGrader } from "./color-grader";
+export type {
+  GradingResult,
+} from "./color-grader";
+
+export * from "./presets";
+
+export { SceneOrchestrator } from "./scene-orchestrator";
+export type {
+  Character,
+  SceneConfig,
+} from "./scene-orchestrator";
