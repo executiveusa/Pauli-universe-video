@@ -11,3 +11,9 @@ export type {
   SearchResult,
   VectorSearchOptions,
 } from "./vector-search";
+
+export { FluxOrchestrator } from "./flux-orchestrator";
+export type {
+  FluxOptions,
+  FluxResult,
+} from "./flux-orchestrator";
