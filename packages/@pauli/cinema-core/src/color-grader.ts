@@ -1,177 +1,190 @@
-export type ColorPreset =
-  | 'cinematic-gold'
-  | 'cool-blue'
-  | 'warm-sunset'
-  | 'noir-contrast'
-  | 'pastel-dream'
-  | 'high-saturation'
-  | 'desaturated'
-  | 'sepia-tone'
-  | 'neon-glow'
-  | 'vintage-film'
-  | 'color-graded-pro'
-  | 'nature-green';
+import * as fs from "fs";
+import * as path from "path";
+import * as os from "os";
+import { execSync } from "child_process";
 
-export interface ColorGrade {
-  name: ColorPreset;
-  contrast: number;
-  saturation: number;
-  brightness: number;
-  temperature: number;
-  shadows: number;
-  highlights: number;
-  vibrance: number;
+export interface GradingResult {
+  success: boolean;
+  videoBytes?: Buffer;
+  fileSizeBytes?: number;
+  error?: string;
 }
 
-const PRESETS: Record<ColorPreset, ColorGrade> = {
-  'cinematic-gold': {
-    name: 'cinematic-gold',
-    contrast: 1.2,
-    saturation: 1.15,
-    brightness: 0.05,
-    temperature: 50,
-    shadows: -0.1,
-    highlights: -0.15,
-    vibrance: 0.2,
-  },
-  'cool-blue': {
-    name: 'cool-blue',
-    contrast: 1.1,
-    saturation: 1.05,
-    brightness: 0,
-    temperature: -80,
-    shadows: 0,
-    highlights: 0,
-    vibrance: 0.1,
-  },
-  'warm-sunset': {
-    name: 'warm-sunset',
-    contrast: 1.15,
-    saturation: 1.25,
-    brightness: 0.1,
-    temperature: 150,
-    shadows: -0.2,
-    highlights: -0.1,
-    vibrance: 0.3,
-  },
-  'noir-contrast': {
-    name: 'noir-contrast',
-    contrast: 1.5,
-    saturation: 0,
-    brightness: -0.1,
-    temperature: 0,
-    shadows: -0.3,
-    highlights: 0.2,
-    vibrance: 0,
-  },
-  'pastel-dream': {
-    name: 'pastel-dream',
-    contrast: 0.8,
-    saturation: 0.85,
-    brightness: 0.15,
-    temperature: 30,
-    shadows: 0.1,
-    highlights: -0.05,
-    vibrance: -0.1,
-  },
-  'high-saturation': {
-    name: 'high-saturation',
-    contrast: 1.1,
-    saturation: 1.5,
-    brightness: 0,
-    temperature: 0,
-    shadows: 0,
-    highlights: 0,
-    vibrance: 0.4,
-  },
-  desaturated: {
-    name: 'desaturated',
-    contrast: 1.05,
-    saturation: 0.5,
-    brightness: 0,
-    temperature: 0,
-    shadows: 0,
-    highlights: 0,
-    vibrance: 0,
-  },
-  'sepia-tone': {
-    name: 'sepia-tone',
-    contrast: 1.1,
-    saturation: 0.3,
-    brightness: 0.05,
-    temperature: 100,
-    shadows: 0.05,
-    highlights: -0.1,
-    vibrance: 0,
-  },
-  'neon-glow': {
-    name: 'neon-glow',
-    contrast: 1.3,
-    saturation: 1.4,
-    brightness: 0.2,
-    temperature: -50,
-    shadows: -0.2,
-    highlights: 0.3,
-    vibrance: 0.5,
-  },
-  'vintage-film': {
-    name: 'vintage-film',
-    contrast: 0.95,
-    saturation: 0.9,
-    brightness: 0.08,
-    temperature: 70,
-    shadows: 0.1,
-    highlights: -0.2,
-    vibrance: -0.05,
-  },
-  'color-graded-pro': {
-    name: 'color-graded-pro',
-    contrast: 1.25,
-    saturation: 1.1,
-    brightness: 0.02,
-    temperature: 20,
-    shadows: -0.15,
-    highlights: -0.08,
-    vibrance: 0.15,
-  },
-  'nature-green': {
-    name: 'nature-green',
-    contrast: 1.1,
-    saturation: 1.2,
-    brightness: 0.05,
-    temperature: -40,
-    shadows: 0.05,
-    highlights: -0.1,
-    vibrance: 0.25,
-  },
-};
+/**
+ * Color grading pipeline using FFmpeg LUTs.
+ * Applies cinematic color grading presets to videos.
+ */
+export class ColorGrader {
+  private ffmpegPath = "ffmpeg";
+  private lutPath = path.join(__dirname, "../luts");
 
-export function getPreset(presetName: ColorPreset): ColorGrade {
-  return PRESETS[presetName];
+  /**
+   * Apply color grading preset to video.
+   */
+  async gradeVideo(
+    videoBuffer: Buffer,
+    presetName: string
+  ): Promise<GradingResult> {
+    if (!videoBuffer || videoBuffer.length < 1000) {
+      return {
+        success: false,
+        error: "Invalid video buffer",
+      };
+    }
+
+    // Validate preset exists
+    const lutFile = path.join(this.lutPath, `${presetName}.cube`);
+    if (!fs.existsSync(lutFile)) {
+      return {
+        success: false,
+        error: `Preset not found: ${presetName}`,
+      };
+    }
+
+    const tmpDir = os.tmpdir();
+    const inputFile = path.join(tmpDir, `grade_in_${Date.now()}.mp4`);
+    const outputFile = path.join(tmpDir, `grade_out_${Date.now()}.mp4`);
+
+    try {
+      fs.writeFileSync(inputFile, videoBuffer);
+
+      // Apply LUT via FFmpeg
+      const ffmpegCmd = `${this.ffmpegPath} -i "${inputFile}" -vf "lut3d='${lutFile}'" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -y "${outputFile}"`;
+
+      try {
+        execSync(ffmpegCmd, { encoding: "utf-8", maxBuffer: 10 * 1024 * 1024 });
+      } catch (error) {
+        return {
+          success: false,
+          error: `FFmpeg failed: ${String(error)}`,
+        };
+      }
+
+      if (!fs.existsSync(outputFile)) {
+        return {
+          success: false,
+          error: "Output file not created",
+        };
+      }
+
+      const gradedBuffer = fs.readFileSync(outputFile);
+
+      return {
+        success: true,
+        videoBytes: gradedBuffer,
+        fileSizeBytes: gradedBuffer.length,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: `Grading failed: ${String(error)}`,
+      };
+    } finally {
+      try {
+        if (fs.existsSync(inputFile)) fs.unlinkSync(inputFile);
+        if (fs.existsSync(outputFile)) fs.unlinkSync(outputFile);
+      } catch (e) {
+        console.warn("Cleanup failed:", e);
+      }
+    }
+  }
+
+  /**
+   * Batch grade multiple videos with same preset.
+   */
+  async batchGrade(
+    videos: Buffer[],
+    presetName: string
+  ): Promise<GradingResult[]> {
+    const results: GradingResult[] = [];
+
+    for (const video of videos) {
+      const result = await this.gradeVideo(video, presetName);
+      results.push(result);
+    }
+
+    return results;
+  }
+
+  /**
+   * Get available presets.
+   */
+  getAvailablePresets(): string[] {
+    if (!fs.existsSync(this.lutPath)) {
+      return [];
+    }
+
+    return fs
+      .readdirSync(this.lutPath)
+      .filter((file) => file.endsWith(".cube"))
+      .map((file) => file.replace(".cube", ""));
+  }
+
+  /**
+   * Custom color adjustments (without LUT).
+   */
+  async adjustColor(
+    videoBuffer: Buffer,
+    adjustments: {
+      saturation?: number;
+      brightness?: number;
+      contrast?: number;
+    }
+  ): Promise<GradingResult> {
+    const tmpDir = os.tmpdir();
+    const inputFile = path.join(tmpDir, `adj_in_${Date.now()}.mp4`);
+    const outputFile = path.join(tmpDir, `adj_out_${Date.now()}.mp4`);
+
+    try {
+      fs.writeFileSync(inputFile, videoBuffer);
+
+      let filters = [];
+
+      if (adjustments.saturation) {
+        filters.push(`saturate=${adjustments.saturation}`);
+      }
+
+      if (adjustments.brightness) {
+        filters.push(`eq=brightness=${adjustments.brightness / 100}`);
+      }
+
+      if (adjustments.contrast) {
+        filters.push(`eq=contrast=${adjustments.contrast / 100}`);
+      }
+
+      const filterStr = filters.join(",");
+      const ffmpegCmd = `${this.ffmpegPath} -i "${inputFile}" -vf "${filterStr}" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 128k -y "${outputFile}"`;
+
+      execSync(ffmpegCmd, { encoding: "utf-8", maxBuffer: 10 * 1024 * 1024 });
+
+      if (!fs.existsSync(outputFile)) {
+        return {
+          success: false,
+          error: "Adjustment failed",
+        };
+      }
+
+      const adjustedBuffer = fs.readFileSync(outputFile);
+
+      return {
+        success: true,
+        videoBytes: adjustedBuffer,
+        fileSizeBytes: adjustedBuffer.length,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: String(error),
+      };
+    } finally {
+      try {
+        if (fs.existsSync(inputFile)) fs.unlinkSync(inputFile);
+        if (fs.existsSync(outputFile)) fs.unlinkSync(outputFile);
+      } catch (e) {
+        console.warn("Cleanup failed:", e);
+      }
+    }
+  }
 }
 
-export function listPresets(): ColorPreset[] {
-  return Object.keys(PRESETS) as ColorPreset[];
-}
-
-export function applyColorGrade(grade: ColorGrade): string {
-  return JSON.stringify(grade);
-}
-
-export function customGrade(
-  contrast: number,
-  saturation: number,
-  brightness: number,
-  temperature: number
-): ColorGrade {
-  return {
-    name: 'cinematic-gold',
-    contrast,
-    saturation,
-    brightness,
-    temperature,
-    shadows: 0,
-    highlights: 0,
-    vibrance: 0,
-  };
-}
+export { ColorGrader as default };
