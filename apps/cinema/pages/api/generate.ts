@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { randomUUID } from "crypto";
 
 interface GenerateRequest {
   characterId: string;
@@ -56,7 +57,7 @@ export default async function handler(
     const durationSec = typeof body.durationSec === "number" ? body.durationSec : 20;
     const colorPreset = body.colorPreset || "Reservoir Dogs";
     const mood = body.mood || "cinematic";
-    const jobId = `job-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const jobId = `job-${randomUUID()}`;
 
     return res.status(200).json({
       success: true,
