@@ -1,0 +1,38 @@
+name: Quality Gate
+
+on:
+  push:
+    branches: [main, claude/**]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 9.0.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check for secrets
+        run: |
+          ! grep -r "sk-" packages/ apps/ services/ 2>/dev/null || (echo "❌ Found API keys in code" && exit 1)
+          echo "✓ No API keys found in code"
+
+      - name: Check for TODOs
+        run: |
+          ! grep -r "TODO\|FIXME\|stub\|mock" packages/ apps/ --include="*.ts" --include="*.tsx" | grep -v "node_modules" 2>/dev/null || (echo "❌ Found incomplete code" && exit 1)
+          echo "✓ No incomplete code found"
+
+      - name: Audit dependencies
+        run: pnpm audit --audit-level=moderate || true
+
+      - name: Format check
+        run: pnpm format:check
