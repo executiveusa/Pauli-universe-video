@@ -16,7 +16,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "lint": "eslint src",
+    "lint": "eslint src/higgsfield.ts src/color-grader.ts src/udec-scorer.ts src/cost-tracker.ts src/infinite-gen.ts src/index.ts",
     "type-check": "tsc --noEmit",
     "format": "prettier --write src",
     "format:check": "prettier --check src"

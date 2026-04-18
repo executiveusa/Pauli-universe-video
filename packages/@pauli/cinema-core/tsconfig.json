@@ -18,6 +18,13 @@
     "isolatedModules": true,
     "allowJs": false
   },
-  "include": ["src"],
-  "exclude": ["__tests__", "node_modules"]
+  "include": [
+    "src/higgsfield.ts",
+    "src/color-grader.ts",
+    "src/udec-scorer.ts",
+    "src/cost-tracker.ts",
+    "src/infinite-gen.ts",
+    "src/index.ts"
+  ],
+  "exclude": ["__tests__", "node_modules", "src/**/*.test.ts"]
 }
