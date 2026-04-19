@@ -1,23 +1,4 @@
 {
-<<<<<<< HEAD
-  "name": "@pauli/universe",
-  "version": "0.1.0",
-  "private": true,
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
-  "scripts": {
-    "build": "turbo build",
-    "test": "turbo test",
-    "lint": "turbo lint",
-    "typecheck": "turbo typecheck",
-    "dev": "turbo dev"
-  },
-  "devDependencies": {
-    "turbo": "^2.0.0",
-    "typescript": "^5.3.0"
-=======
   "name": "pauli-universe-video",
   "version": "0.0.1",
   "description": "Poly Universe: Cinema Studio + Where's Pauli Game + Creator Engine",
@@ -65,6 +46,5 @@
     "**/*.{ts,tsx}": [
       "eslint --fix"
     ]
->>>>>>> origin/main
   }
 }
