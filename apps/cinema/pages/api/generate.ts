@@ -18,7 +18,8 @@ const GenerateRequestSchema = z.object({
   motionIntensity: z.number().min(1).max(10).default(5).optional(),
 });
 
-type GenerateRequest = z.infer<typeof GenerateRequestSchema>;
+// Type is inferred but not explicitly used - kept for type safety and clarity
+type _GenerateRequest = z.infer<typeof GenerateRequestSchema>;
 
 interface GenerateResponse {
   success: boolean;
@@ -63,7 +64,7 @@ export default async function handler(
     const costTracker = new CostTracker();
 
     // Step 1: Get character from vector search (mock)
-    const characterName = `character_${body.characterId.substring(0, 8)}`;
+    // Character lookup would go here - currently using characterId directly
 
     // Step 2: Generate keyframe using FLUX.2
     const keyframeResult = await fluxOrchestrator.generateKeyframe(

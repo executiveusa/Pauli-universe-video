@@ -40,6 +40,7 @@ export const CharacterCard: React.FC<CharacterCardProps> = ({
       <div className={styles.header}>
         <div className={styles.avatar}>
           {character.avatar ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img src={character.avatar} alt={character.name} />
           ) : (
             <span className={styles.placeholder}>👻</span>

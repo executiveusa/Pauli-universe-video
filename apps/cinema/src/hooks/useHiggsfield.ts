@@ -44,7 +44,7 @@ export function useHiggsfield() {
   }, [soulIds]);
 
   const validateConsistency = useCallback(
-    async (characterId: string, videoFrames: string[]): Promise<number> => {
+    async (characterId: string, _videoFrames: string[]): Promise<number> => {
       try {
         const soulId = soulIds.get(characterId);
         if (!soulId) {
