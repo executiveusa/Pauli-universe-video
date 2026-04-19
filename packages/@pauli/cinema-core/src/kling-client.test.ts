@@ -7,7 +7,10 @@ vi.mock("axios");
 describe("KlingClient", () => {
   let client: KlingClient;
   const mockVideoBase64 = Buffer.from("fake-video-data").toString("base64");
-  const mockKeyframeBase64 = Buffer.from("fake-keyframe-data").toString("base64");
+  // Generate a keyframe base64 string >= 100 chars (needed for validation)
+  const mockKeyframeBase64 = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+  ).toString("base64").repeat(2).slice(0, 150);
 
   beforeEach(() => {
     process.env.MODAL_API_KEY = "test-key";

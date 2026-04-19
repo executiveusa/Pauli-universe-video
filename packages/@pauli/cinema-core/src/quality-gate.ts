@@ -1,5 +1,4 @@
 import { UDECScorer, UDECScore } from "./udec-scorer";
-import { z } from "zod";
 
 export interface QualityResult {
   jobId: string;

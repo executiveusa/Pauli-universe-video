@@ -8,7 +8,7 @@ import { MetadataPanel } from '../src/components/MetadataPanel';
 import { StudioLayout, StudioHeader, StudioSidebar, StudioFooter } from '../src/components/StudioLayout';
 import { useCharacter } from '../src/hooks/useCharacter';
 import { useGeneration } from '../src/hooks/useGeneration';
-import { useHighgsfield } from '../src/hooks/useHighgsfield';
+import { useHiggsfield } from '../src/hooks/useHiggsfield';
 import '../src/styles/globals.css';
 
 interface VideoResult extends VideoMetadata {
@@ -18,7 +18,7 @@ interface VideoResult extends VideoMetadata {
 export default function StudioPage() {
   const { characters, selectedCharacter, loadCharacters, selectCharacter } = useCharacter();
   const { currentJob, startGeneration, isGenerating } = useGeneration();
-  const { generateSoulId, validateConsistency } = useHighgsfield();
+  const { generateSoulId, validateConsistency } = useHiggsfield();
 
   const [videoResult, setVideoResult] = useState<VideoResult | null>(null);
   const [badgeStatus, setBadgeStatus] = useState<BadgeStatus>('idle');

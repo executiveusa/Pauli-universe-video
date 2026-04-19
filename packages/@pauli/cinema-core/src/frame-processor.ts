@@ -2,7 +2,6 @@ import * as fs from "fs";
 import * as path from "path";
 import * as os from "os";
 import { execSync } from "child_process";
-import { z } from "zod";
 
 export interface InterpolationOptions {
   targetFps?: number;
@@ -23,6 +22,10 @@ export interface ProcessResult {
 /**
  * Frame processor for video post-processing.
  * Handles interpolation, FPS normalization, and motion enhancement.
+ *
+ * NOTE: This implementation requires ffmpeg/ffprobe on PATH.
+ * In serverless environments (Vercel Functions), FFmpeg is not available.
+ * Consider moving processing to Modal GPU workers or bundling ffmpeg-static.
  */
 export class FrameProcessor {
   private ffmpegPath = "ffmpeg";

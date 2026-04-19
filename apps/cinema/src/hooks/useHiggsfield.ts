@@ -9,7 +9,7 @@ export interface SoulID {
   expiresAt: string;
 }
 
-export function useHighgsfield() {
+export function useHiggsfield() {
   const [soulIds, setSoulIds] = useState<Map<string, SoulID>>(new Map());
   const [isTraining, setIsTraining] = useState(false);
   const [consistencyScores, setConsistencyScores] = useState<Map<string, number>>(new Map());

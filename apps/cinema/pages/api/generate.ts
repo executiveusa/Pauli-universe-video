@@ -52,7 +52,7 @@ export default async function handler(
   try {
     // Validate request
     const body = GenerateRequestSchema.parse(req.body);
-    const jobId = `job-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const jobId = `job-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 
     // Initialize services (only those required for this flow)
     const fluxOrchestrator = new FluxOrchestrator();
