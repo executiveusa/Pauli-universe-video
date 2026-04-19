@@ -53,8 +53,9 @@ describe("VectorSearch", () => {
         insert: mockInsert,
       });
 
+      const uuid = "550e8400-e29b-41d4-a716-446655440000";
       await vectorSearch.storeCharacter(
-        "char-1",
+        uuid,
         "Albert Einstein",
         mockEmbedding,
         { description: "Physicist" }
@@ -63,7 +64,7 @@ describe("VectorSearch", () => {
       expect(mockInsert).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({
-            id: "char-1",
+            id: uuid,
             name: "Albert Einstein",
           }),
         ])
@@ -72,8 +73,9 @@ describe("VectorSearch", () => {
 
     it("throws on wrong embedding dimensions", async () => {
       const wrongDim = Array(512).fill(0);
+      const uuid = "550e8400-e29b-41d4-a716-446655440000";
       await expect(
-        vectorSearch.storeCharacter("char-1", "Test", wrongDim)
+        vectorSearch.storeCharacter(uuid, "Test", wrongDim)
       ).rejects.toThrow("768 dimensions");
     });
 
@@ -87,8 +89,9 @@ describe("VectorSearch", () => {
         insert: mockInsert,
       });
 
+      const uuid = "550e8400-e29b-41d4-a716-446655440000";
       await expect(
-        vectorSearch.storeCharacter("char-1", "Test", mockEmbedding)
+        vectorSearch.storeCharacter(uuid, "Test", mockEmbedding)
       ).rejects.toThrow("Failed to store");
     });
   });
@@ -97,13 +100,13 @@ describe("VectorSearch", () => {
     it("searches for similar characters", async () => {
       const mockResults = [
         {
-          id: "char-1",
+          id: "550e8400-e29b-41d4-a716-446655440000",
           name: "Einstein",
           similarity: 0.95,
           metadata: null,
         },
         {
-          id: "char-2",
+          id: "550e8400-e29b-41d4-a716-446655440001",
           name: "Bohr",
           similarity: 0.87,
           metadata: null,
@@ -153,12 +156,13 @@ describe("VectorSearch", () => {
 
   describe("getCharacter", () => {
     it("retrieves character by ID", async () => {
+      const uuid = "550e8400-e29b-41d4-a716-446655440000";
       const mockChar = {
-        id: "char-1",
+        id: uuid,
         name: "Einstein",
         embedding: mockEmbedding,
         created_at: new Date().toISOString(),
-        metadata: null,
+        metadata: {},
       };
 
       const mockSelect = vi.fn().mockReturnValue({
@@ -174,7 +178,7 @@ describe("VectorSearch", () => {
         select: mockSelect,
       });
 
-      const result = await vectorSearch.getCharacter("char-1");
+      const result = await vectorSearch.getCharacter(uuid);
       expect(result?.name).toBe("Einstein");
     });
 
@@ -210,7 +214,8 @@ describe("VectorSearch", () => {
         update: mockUpdate,
       });
 
-      await vectorSearch.updateCharacter("char-1", mockEmbedding, {
+      const uuid = "550e8400-e29b-41d4-a716-446655440000";
+      await vectorSearch.updateCharacter(uuid, mockEmbedding, {
         updated: true,
       });
 
@@ -219,8 +224,9 @@ describe("VectorSearch", () => {
 
     it("throws on wrong embedding dimensions", async () => {
       const wrongDim = Array(512).fill(0);
+      const uuid = "550e8400-e29b-41d4-a716-446655440000";
       await expect(
-        vectorSearch.updateCharacter("char-1", wrongDim)
+        vectorSearch.updateCharacter(uuid, wrongDim)
       ).rejects.toThrow("768 dimensions");
     });
   });
@@ -238,7 +244,8 @@ describe("VectorSearch", () => {
         delete: mockDelete,
       });
 
-      await vectorSearch.deleteCharacter("char-1");
+      const uuid = "550e8400-e29b-41d4-a716-446655440000";
+      await vectorSearch.deleteCharacter(uuid);
       expect(mockDelete).toHaveBeenCalled();
     });
   });
@@ -254,14 +261,16 @@ describe("VectorSearch", () => {
         insert: mockInsert,
       });
 
+      const uuid1 = "550e8400-e29b-41d4-a716-446655440000";
+      const uuid2 = "550e8400-e29b-41d4-a716-446655440001";
       await vectorSearch.batchStoreCharacters([
         {
-          id: "char-1",
+          id: uuid1,
           name: "Einstein",
           embedding: mockEmbedding,
         },
         {
-          id: "char-2",
+          id: uuid2,
           name: "Bohr",
           embedding: mockEmbedding,
         },
@@ -269,18 +278,19 @@ describe("VectorSearch", () => {
 
       expect(mockInsert).toHaveBeenCalledWith(
         expect.arrayContaining([
-          expect.objectContaining({ id: "char-1" }),
-          expect.objectContaining({ id: "char-2" }),
+          expect.objectContaining({ id: uuid1 }),
+          expect.objectContaining({ id: uuid2 }),
         ])
       );
     });
 
     it("validates all embeddings before insert", async () => {
       const wrongDim = Array(512).fill(0);
+      const uuid = "550e8400-e29b-41d4-a716-446655440000";
       await expect(
         vectorSearch.batchStoreCharacters([
           {
-            id: "char-1",
+            id: uuid,
             name: "Test",
             embedding: wrongDim,
           },
