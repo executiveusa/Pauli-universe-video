@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 import {
-  CharacterEmbedder,
-  VectorSearch,
   FluxOrchestrator,
   SeedanceClient,
   KlingClient,
@@ -11,13 +9,13 @@ import {
   CostTracker,
 } from "@pauli/cinema-core";
 
-// Request validation schema
+// Request validation schema (accepts Studio client format)
 const GenerateRequestSchema = z.object({
-  characterId: z.string().uuid(),
+  characterId: z.string(),
   scenePrompt: z.string().min(10).max(500),
-  mood: z.enum(["noir", "crime", "suspenseful", "cinematic", "neon"]),
+  colorPreset: z.string().default("heat"),
   durationSec: z.number().min(5).max(30).default(20),
-  colorPreset: z.string().default("Reservoir Dogs"),
+  motionIntensity: z.number().min(1).max(10).default(5).optional(),
 });
 
 type GenerateRequest = z.infer<typeof GenerateRequestSchema>;
@@ -56,9 +54,7 @@ export default async function handler(
     const body = GenerateRequestSchema.parse(req.body);
     const jobId = `job-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-    // Initialize services
-    const embedder = new CharacterEmbedder();
-    const vectorSearch = new VectorSearch();
+    // Initialize services (only those required for this flow)
     const fluxOrchestrator = new FluxOrchestrator();
     const seedanceClient = new SeedanceClient();
     const klingClient = new KlingClient();
@@ -71,7 +67,7 @@ export default async function handler(
 
     // Step 2: Generate keyframe using FLUX.2
     const keyframeResult = await fluxOrchestrator.generateKeyframe(
-      `${body.scenePrompt} - ${body.mood} mood`,
+      body.scenePrompt,
       { seed: body.characterId.charCodeAt(0) }
     );
 

@@ -62,16 +62,19 @@ export function useGeneration() {
         );
       }
 
-      // Simulate API call to /api/generate
+      // Call /api/generate
       const response = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(config),
       });
 
-      if (!response.ok) throw new Error('Generation failed');
-
       const result = await response.json();
+
+      // Check both HTTP status AND semantic success field
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || 'Generation failed');
+      }
 
       const completedJob: GenerationJob = {
         id: jobId,
