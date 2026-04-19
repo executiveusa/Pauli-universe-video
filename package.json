@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "@pauli/universe",
   "version": "0.1.0",
   "private": true,
@@ -16,5 +17,54 @@
   "devDependencies": {
     "turbo": "^2.0.0",
     "typescript": "^5.3.0"
+=======
+  "name": "pauli-universe-video",
+  "version": "0.0.1",
+  "description": "Poly Universe: Cinema Studio + Where's Pauli Game + Creator Engine",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "build": "turbo build",
+    "test": "turbo test",
+    "test:coverage": "turbo test -- --coverage",
+    "coverage-check": "node scripts/coverage-check.js",
+    "lint": "turbo lint",
+    "type-check": "turbo type-check",
+    "format": "turbo format",
+    "format:check": "turbo format:check",
+    "clean": "turbo clean && rm -rf node_modules pnpm-lock.yaml",
+    "deploy": "turbo deploy",
+    "dev": "turbo dev --parallel",
+    "precommit": "lint-staged"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^14.3.1",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^20.11.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^15.5.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.0",
+    "ts-jest": "^29.1.1",
+    "turbo": "^1.10.0",
+    "typescript": "^5.3.0"
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx,json,md}": [
+      "prettier --write"
+    ],
+    "**/*.{ts,tsx}": [
+      "eslint --fix"
+    ]
+>>>>>>> origin/main
   }
 }

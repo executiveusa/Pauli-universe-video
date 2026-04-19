@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2020",
+<<<<<<< HEAD
     "module": "ES2020",
     "moduleResolution": "bundler",
     "lib": ["ES2020"],
@@ -13,4 +14,43 @@
     "isolatedModules": true,
     "jsx": "react-jsx"
   }
+=======
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "skipLibCheck": true,
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "allowJs": false,
+    "baseUrl": ".",
+    "paths": {
+      "@pauli/shared": ["packages/@pauli/shared/src"],
+      "@pauli/cinema-core": ["packages/@pauli/cinema-core/src"],
+      "@pauli/game-engine": ["packages/@pauli/game-engine/src"],
+      "@pauli/engine-api": ["packages/@pauli/engine-api/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist", ".next"]
+>>>>>>> origin/main
 }
