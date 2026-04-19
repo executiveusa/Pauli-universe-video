@@ -170,21 +170,15 @@ describe("SeedanceClient", () => {
     });
 
     it("handles failures in batch", async () => {
-      let callCount = 0;
-      vi.mocked(axios.post).mockImplementation(async () => {
-        callCount++;
-        // Item 1: call 1 - success
-        // Item 2: calls 2-4 (1 + 3 retries) - fail all
-        // Item 3: call 5+ - success
-        if (callCount === 1 || callCount > 4) {
-          return {
-            data: { success: true, video_base64: mockVideoBase64, cost: 0.15 },
-          };
-        }
-        // Calls 2, 3, 4 are for item 2 - all fail with authentication error (not retryable after first fail)
-        const authError = new Error("authentication failed");
-        throw authError;
-      });
+      // For item 2, reject with an error that doesn't retry
+      vi.mocked(axios.post)
+        .mockResolvedValueOnce({
+          data: { success: true, video_base64: mockVideoBase64, cost: 0.15 },
+        })
+        .mockRejectedValueOnce(new Error("invalid input"))
+        .mockResolvedValueOnce({
+          data: { success: true, video_base64: mockVideoBase64, cost: 0.15 },
+        });
 
       const results = await client.batchGenerateVideos(
         [mockKeyframeBase64, mockKeyframeBase64, mockKeyframeBase64],
