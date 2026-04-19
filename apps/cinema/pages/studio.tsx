@@ -3,7 +3,7 @@ import { CharacterCard } from '../src/components/CharacterCard';
 import { VideoPreview, type VideoMetadata } from '../src/components/VideoPreview';
 import { GenerationForm, type GenerationConfig } from '../src/components/GenerationForm';
 import { PresetGrid } from '../src/components/PresetGrid';
-import { CharacterBadge, type BadgeStatus } from '../src/components/CharacterBadge';
+import { type BadgeStatus } from '../src/components/CharacterBadge';
 import { MetadataPanel } from '../src/components/MetadataPanel';
 import { StudioLayout, StudioHeader, StudioSidebar, StudioFooter } from '../src/components/StudioLayout';
 import { useCharacter } from '../src/hooks/useCharacter';
@@ -21,7 +21,7 @@ export default function StudioPage() {
   const { generateSoulId } = useHiggsfield();
 
   const [videoResult, setVideoResult] = useState<VideoResult | null>(null);
-  const [badgeStatus, setBadgeStatus] = useState<BadgeStatus>('idle');
+  const [_badgeStatus, _setBadgeStatus] = useState<BadgeStatus>('idle');
   const [_badgeMessage, _setBadgeMessage] = useState('');
 
   useEffect(() => {
@@ -33,23 +33,23 @@ export default function StudioPage() {
       switch (currentJob.status) {
         case 'pending':
         case 'embedding':
-          setBadgeStatus('thinking');
+          _setBadgeStatus('thinking');
           _setBadgeMessage('Analyzing scene...');
           break;
         case 'keyframe':
-          setBadgeStatus('thinking');
+          _setBadgeStatus('thinking');
           _setBadgeMessage('Generating keyframe...');
           break;
         case 'video':
-          setBadgeStatus('waiting');
+          _setBadgeStatus('waiting');
           _setBadgeMessage('Rendering video...');
           break;
         case 'processing':
-          setBadgeStatus('waiting');
+          _setBadgeStatus('waiting');
           _setBadgeMessage('Quality check...');
           break;
         case 'complete':
-          setBadgeStatus('complete');
+          _setBadgeStatus('complete');
           _setBadgeMessage('Video ready!');
           if (currentJob.videoUrl && currentJob.udecScore && currentJob.cost) {
             setVideoResult({
@@ -66,7 +66,7 @@ export default function StudioPage() {
           }
           break;
         case 'failed':
-          setBadgeStatus('error');
+          _setBadgeStatus('error');
           _setBadgeMessage(currentJob.error || 'Generation failed');
           break;
       }
@@ -83,7 +83,7 @@ export default function StudioPage() {
       // Start generation workflow
       await startGeneration(config);
     } catch (error) {
-      setBadgeStatus('error');
+      _setBadgeStatus('error');
       _setBadgeMessage(error instanceof Error ? error.message : 'Generation error');
     }
   };
