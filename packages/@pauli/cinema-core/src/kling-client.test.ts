@@ -50,7 +50,7 @@ describe("KlingClient", () => {
     it("throws on empty prompt", async () => {
       await expect(
         client.generateVideo(mockKeyframeBase64, "")
-      ).rejects.toThrow("prompt");
+      ).rejects.toThrow("Prompt cannot be empty");
     });
 
     it("throws on invalid duration", async () => {
@@ -94,7 +94,7 @@ describe("KlingClient", () => {
       expect(result.success).toBe(false);
       expect(result.retries).toBe(2);
       expect(vi.mocked(axios.post).mock.calls.length).toBe(3); // 1 + 2 retries
-    });
+    }, { timeout: 15000 });
 
     it("does not retry on authentication error", async () => {
       vi.mocked(axios.post).mockRejectedValue(

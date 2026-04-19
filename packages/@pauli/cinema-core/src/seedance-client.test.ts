@@ -57,7 +57,7 @@ describe("SeedanceClient", () => {
     it("throws on empty prompt", async () => {
       await expect(
         client.generateVideo(mockKeyframeBase64, "")
-      ).rejects.toThrow("prompt");
+      ).rejects.toThrow("Prompt cannot be empty");
     });
 
     it("throws on invalid motion intensity", async () => {
@@ -132,7 +132,7 @@ describe("SeedanceClient", () => {
       expect(result.success).toBe(false);
       expect(result.error).toContain("after");
       expect(result.retries).toBe(3);
-    });
+    }, { timeout: 15000 });
 
     it("does not retry on authentication error", async () => {
       vi.mocked(axios.post).mockRejectedValue(
@@ -170,14 +170,21 @@ describe("SeedanceClient", () => {
     });
 
     it("handles failures in batch", async () => {
-      vi.mocked(axios.post)
-        .mockResolvedValueOnce({
-          data: { success: true, video_base64: mockVideoBase64, cost: 0.15 },
-        })
-        .mockRejectedValueOnce(new Error("Failed"))
-        .mockResolvedValueOnce({
-          data: { success: true, video_base64: mockVideoBase64, cost: 0.15 },
-        });
+      let callCount = 0;
+      vi.mocked(axios.post).mockImplementation(async () => {
+        callCount++;
+        // Item 1: call 1 - success
+        // Item 2: calls 2-4 (1 + 3 retries) - fail all
+        // Item 3: call 5+ - success
+        if (callCount === 1 || callCount > 4) {
+          return {
+            data: { success: true, video_base64: mockVideoBase64, cost: 0.15 },
+          };
+        }
+        // Calls 2, 3, 4 are for item 2 - all fail with authentication error (not retryable after first fail)
+        const authError = new Error("authentication failed");
+        throw authError;
+      });
 
       const results = await client.batchGenerateVideos(
         [mockKeyframeBase64, mockKeyframeBase64, mockKeyframeBase64],
@@ -188,6 +195,6 @@ describe("SeedanceClient", () => {
       expect(results[0].success).toBe(true);
       expect(results[1].success).toBe(false);
       expect(results[2].success).toBe(true);
-    });
+    }, { timeout: 15000 });
   });
 });

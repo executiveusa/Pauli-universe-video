@@ -16,7 +16,8 @@ describe("FrameProcessor", () => {
     });
 
     it("rejects invalid FPS", async () => {
-      const mockBuffer = Buffer.from("fake video data");
+      // Create a buffer larger than 1000 bytes to pass initial validation
+      const mockBuffer = Buffer.alloc(2000, 0xff);
       const result = await processor.interpolateFrames(mockBuffer, {
         targetFps: 100,
       });
