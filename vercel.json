@@ -1,0 +1,19 @@
+{
+  "buildCommand": "turbo build",
+  "outputDirectory": "apps/cinema/.next",
+  "env": {
+    "NEXT_PUBLIC_API_URL": "@pauli_api_url"
+  },
+  "envs": {
+    "preview": {
+      "env": {
+        "NEXT_PUBLIC_API_URL": "@pauli_api_url_preview"
+      }
+    },
+    "production": {
+      "env": {
+        "NEXT_PUBLIC_API_URL": "@pauli_api_url_prod"
+      }
+    }
+  }
+}

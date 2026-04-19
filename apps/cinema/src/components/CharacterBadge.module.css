@@ -1,0 +1,115 @@
+.badge {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--gradient-noir);
+  border: 1px solid var(--pauli-gray-700);
+  border-radius: var(--radius-full);
+  z-index: var(--z-notification);
+  animation: slideIn var(--duration-fast) var(--ease-smooth));
+  box-shadow: var(--shadow-md);
+}
+
+.badge.top-left {
+  top: var(--space-6);
+  left: var(--space-6);
+}
+
+.badge.top-right {
+  top: var(--space-6);
+  right: var(--space-6);
+}
+
+.badge.bottom-left {
+  bottom: var(--space-6);
+  left: var(--space-6);
+}
+
+.badge.bottom-right {
+  bottom: var(--space-6);
+  right: var(--space-6);
+}
+
+.icon {
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--pauli-white);
+}
+
+.message {
+  font-size: 11px;
+  color: var(--pauli-gray-400);
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statusIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  margin-left: var(--space-2);
+}
+
+/* Status colors */
+.badge.idle {
+  border-color: var(--pauli-gray-600);
+}
+
+.badge.idle .statusIndicator {
+  background: var(--pauli-gray-500);
+}
+
+.badge.thinking {
+  border-color: var(--pauli-purple);
+  box-shadow: var(--shadow-md), var(--shadow-glow);
+}
+
+.badge.thinking .statusIndicator {
+  background: var(--pauli-purple);
+  animation: pulse var(--duration-normal) infinite;
+}
+
+.badge.waiting {
+  border-color: var(--pauli-gold);
+}
+
+.badge.waiting .statusIndicator {
+  background: var(--pauli-gold);
+  animation: pulse var(--duration-normal) infinite;
+}
+
+.badge.complete {
+  border-color: var(--pauli-cyan);
+  box-shadow: var(--shadow-md), 0 0 20px rgba(6, 255, 165, 0.2);
+}
+
+.badge.complete .statusIndicator {
+  background: var(--pauli-cyan);
+}
+
+.badge.error {
+  border-color: var(--pauli-red);
+  box-shadow: var(--shadow-md), var(--shadow-glow-red);
+}
+
+.badge.error .statusIndicator {
+  background: var(--pauli-red);
+  animation: pulse var(--duration-fast) infinite;
+}

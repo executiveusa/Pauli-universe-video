@@ -1,0 +1,101 @@
+/* Cinema Studio™ Design Tokens */
+
+:root {
+  /* Primary Colors */
+  --pauli-black: #0a0a0a;
+  --pauli-white: #f5f5f5;
+  --pauli-red: #e63946;
+  --pauli-gold: #f4a261;
+  --pauli-purple: #a855f7;
+  --pauli-blue: #1d3557;
+  --pauli-cyan: #06ffa5;
+  --pauli-gray-900: #1a1a1a;
+  --pauli-gray-800: #2d2d2d;
+  --pauli-gray-700: #404040;
+  --pauli-gray-600: #5a5a5a;
+  --pauli-gray-500: #757575;
+  --pauli-gray-400: #999;
+  --pauli-gray-300: #ccc;
+  --pauli-gray-200: #e5e5e5;
+  --pauli-gray-100: #f2f2f2;
+
+  /* Cinematic Gradients */
+  --gradient-noir: linear-gradient(135deg, var(--pauli-black) 0%, var(--pauli-blue) 100%);
+  --gradient-crime: linear-gradient(135deg, var(--pauli-red) 0%, var(--pauli-black) 100%);
+  --gradient-power: linear-gradient(135deg, var(--pauli-purple) 0%, var(--pauli-red) 100%);
+  --gradient-emerald: linear-gradient(135deg, var(--pauli-cyan) 0%, var(--pauli-blue) 100%);
+  --gradient-gold: linear-gradient(135deg, var(--pauli-gold) 0%, var(--pauli-red) 100%);
+
+  /* Typography */
+  --font-mono: 'IBM Plex Mono', monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 32px;
+  --text-4xl: 48px;
+
+  /* Spacing (8px grid) */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 20px rgba(168, 85, 247, 0.4);
+  --shadow-glow-red: 0 0 20px rgba(230, 57, 70, 0.4);
+
+  /* Border Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* Animation Easing */
+  --ease-film-in: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-film-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-sharp: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* Animation Duration */
+  --duration-instant: 100ms;
+  --duration-fast: 200ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-epic: 1000ms;
+
+  /* Z-index Scale */
+  --z-base: 1;
+  --z-dropdown: 10;
+  --z-sticky: 20;
+  --z-fixed: 30;
+  --z-modal-backdrop: 40;
+  --z-modal: 50;
+  --z-tooltip: 60;
+  --z-notification: 70;
+}
+
+/* Dark mode (default for Cinema Studio) */
+@media (prefers-color-scheme: light) {
+  :root {
+    --pauli-black: #f5f5f5;
+    --pauli-white: #0a0a0a;
+  }
+}

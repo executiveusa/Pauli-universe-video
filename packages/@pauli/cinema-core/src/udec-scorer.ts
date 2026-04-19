@@ -1,8 +1,3 @@
-import * as fs from "fs";
-import * as path from "path";
-import * as os from "os";
-import { execSync } from "child_process";
-
 export interface UDECScore {
   mot: number; // Motion smoothness (0-10)
   acc: number; // Accessibility (0-10)
