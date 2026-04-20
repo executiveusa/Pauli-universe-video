@@ -116,7 +116,7 @@ function validateNonNegativeFiniteNumber(
 ): void {
   if (!Number.isFinite(value)) {
     throw new Error(
-      `[${functionName}] Invalid ${argumentName}: expected a finite number >= 0`
+      `[${functionName}] Invalid ${argumentName}: expected a finite number`
     );
   }
 
