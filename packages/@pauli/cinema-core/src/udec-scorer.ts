@@ -19,21 +19,36 @@ export interface UDECScoreRequest {
 }
 
 export function scoreUDEC(request: UDECScoreRequest): UDECScore {
+  const motion = validateFiniteScore('scoreUDEC', 'motion', request.motion);
+  const accessibility = validateFiniteScore('scoreUDEC', 'accessibility', request.accessibility);
+  const typography = validateFiniteScore('scoreUDEC', 'typography', request.typography);
+  const color = validateFiniteScore('scoreUDEC', 'color', request.color);
+  const speed = validateFiniteScore('scoreUDEC', 'speed', request.speed);
+  const responsiveness = validateFiniteScore('scoreUDEC', 'responsiveness', request.responsiveness);
+  const codeQuality = validateFiniteScore('scoreUDEC', 'codeQuality', request.codeQuality);
+  const architecture = validateFiniteScore('scoreUDEC', 'architecture', request.architecture);
+  const dependencies = validateFiniteScore('scoreUDEC', 'dependencies', request.dependencies);
+  const documentation = validateFiniteScore('scoreUDEC', 'documentation', request.documentation);
+  const errorHandling = validateFiniteScore('scoreUDEC', 'errorHandling', request.errorHandling);
+  const performance = validateFiniteScore('scoreUDEC', 'performance', request.performance);
+  const security = validateFiniteScore('scoreUDEC', 'security', request.security);
+  const userExperience = validateFiniteScore('scoreUDEC', 'userExperience', request.userExperience);
+
   const score: UDECScore = {
-    mot: clampScore(request.motion),
-    acc: clampScore(request.accessibility),
-    typ: clampScore(request.typography),
-    clr: clampScore(request.color),
-    spd: clampScore(request.speed),
-    rsp: clampScore(request.responsiveness),
-    cod: clampScore(request.codeQuality),
-    arc: clampScore(request.architecture),
-    dep: clampScore(request.dependencies),
-    doc: clampScore(request.documentation),
-    err: clampScore(request.errorHandling),
-    prf: clampScore(request.performance),
-    sec: clampScore(request.security),
-    ux: clampScore(request.userExperience),
+    mot: clampScore(motion),
+    acc: clampScore(accessibility),
+    typ: clampScore(typography),
+    clr: clampScore(color),
+    spd: clampScore(speed),
+    rsp: clampScore(responsiveness),
+    cod: clampScore(codeQuality),
+    arc: clampScore(architecture),
+    dep: clampScore(dependencies),
+    doc: clampScore(documentation),
+    err: clampScore(errorHandling),
+    prf: clampScore(performance),
+    sec: clampScore(security),
+    ux: clampScore(userExperience),
     average: 0,
   };
 
@@ -90,5 +105,14 @@ export function getFailingAxes(score: UDECScore): string[] {
 }
 
 function clampScore(score: number): number {
+  validateFiniteScore('clampScore', 'score', score);
   return Math.max(0, Math.min(10, score));
+}
+
+function validateFiniteScore(functionName: string, fieldName: string, value: number): number {
+  if (!Number.isFinite(value)) {
+    throw new Error(`[${functionName}] Invalid ${fieldName}: expected a finite number`);
+  }
+
+  return value;
 }

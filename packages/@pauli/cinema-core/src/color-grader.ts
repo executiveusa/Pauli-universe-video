@@ -147,7 +147,7 @@ const PRESETS: Record<ColorPreset, ColorGrade> = {
 };
 
 export function getPreset(presetName: ColorPreset): ColorGrade {
-  return PRESETS[presetName];
+  return { ...PRESETS[presetName] };
 }
 
 export function listPresets(): ColorPreset[] {

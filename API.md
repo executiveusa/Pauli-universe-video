@@ -25,25 +25,35 @@ Authorization: Bearer YOUR_API_KEY
 
 #### Generate Video
 
-```
-POST /api/cinema/generate
+```http
+POST /api/generate
+Authorization: Bearer YOUR_API_KEY
 Content-Type: application/json
+```
 
+```json
 {
   "characterId": "uuid",
-  "prompt": "string",
-  "duration": 60,
-  "useColorGrading": true,
-  "useHighgsfield": true
+  "prompt": "Cinematic scene prompt with at least 10 characters",
+  "duration": 20
 }
+```
 
-Response:
+Response (`200`):
+
+```json
 {
-  "videoId": "uuid",
-  "url": "string",
-  "duration": 60,
-  "quality": 85,
-  "cost": 3.10
+  "success": true,
+  "jobId": "job-uuid",
+  "videoUrl": "https://cdn.pauli-universe.com/videos/job-uuid.mp4",
+  "status": "processing",
+  "udecScore": 0,
+  "cost": 0,
+  "metadata": {
+    "characterId": "uuid",
+    "prompt": "Cinematic scene prompt with at least 10 characters",
+    "duration": 20
+  }
 }
 ```
 
@@ -51,7 +61,7 @@ Response:
 
 #### Start Game
 
-```
+```http
 POST /api/game/start
 Content-Type: application/json
 
@@ -71,7 +81,7 @@ Response:
 
 #### Submit Guess
 
-```
+```http
 POST /api/game/guess
 Content-Type: application/json
 
@@ -90,7 +100,7 @@ Response:
 
 #### Get Leaderboard
 
-```
+```http
 GET /api/game/leaderboard?limit=100
 
 Response:
@@ -108,7 +118,7 @@ Response:
 
 #### Create Project
 
-```
+```http
 POST /api/engine/projects
 Content-Type: application/json
 
@@ -128,7 +138,7 @@ Response:
 
 #### Create Character
 
-```
+```http
 POST /api/engine/characters
 Content-Type: application/json
 
@@ -148,7 +158,7 @@ Response:
 
 #### Schedule Episode
 
-```
+```http
 POST /api/engine/schedule
 Content-Type: application/json
 
@@ -169,7 +179,7 @@ Response:
 
 #### Generate Episode
 
-```
+```http
 POST /api/podcast/generate
 Content-Type: application/json
 
@@ -190,7 +200,7 @@ Response:
 
 #### Get RSS Feed
 
-```
+```http
 GET /api/podcast/feed
 
 Response: application/rss+xml
@@ -224,7 +234,7 @@ Common status codes:
 
 Headers:
 
-```
+```text
 X-RateLimit-Limit: 1000
 X-RateLimit-Remaining: 999
 X-RateLimit-Reset: 1702650000
@@ -234,7 +244,7 @@ X-RateLimit-Reset: 1702650000
 
 Subscribe to events:
 
-```
+```http
 POST /api/webhooks/subscribe
 {
   "event": "video.generated|game.completed|order.paid",
