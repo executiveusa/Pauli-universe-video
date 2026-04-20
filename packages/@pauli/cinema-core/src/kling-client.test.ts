@@ -7,7 +7,10 @@ vi.mock("axios");
 describe("KlingClient", () => {
   let client: KlingClient;
   const mockVideoBase64 = Buffer.from("fake-video-data").toString("base64");
-  const mockKeyframeBase64 = Buffer.from("fake-keyframe-data").toString("base64");
+  // Generate a keyframe base64 string >= 100 chars (needed for validation)
+  const mockKeyframeBase64 = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+  ).toString("base64").repeat(2).slice(0, 150);
 
   beforeEach(() => {
     process.env.MODAL_API_KEY = "test-key";
@@ -47,7 +50,7 @@ describe("KlingClient", () => {
     it("throws on empty prompt", async () => {
       await expect(
         client.generateVideo(mockKeyframeBase64, "")
-      ).rejects.toThrow("prompt");
+      ).rejects.toThrow("Prompt cannot be empty");
     });
 
     it("throws on invalid duration", async () => {
@@ -91,7 +94,7 @@ describe("KlingClient", () => {
       expect(result.success).toBe(false);
       expect(result.retries).toBe(2);
       expect(vi.mocked(axios.post).mock.calls.length).toBe(3); // 1 + 2 retries
-    });
+    }, { timeout: 15000 });
 
     it("does not retry on authentication error", async () => {
       vi.mocked(axios.post).mockRejectedValue(

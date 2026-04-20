@@ -10,6 +10,7 @@ describe("CharacterEmbedder", () => {
   beforeEach(() => {
     process.env.MODAL_API_KEY = "test-key";
     embedder = new CharacterEmbedder();
+    vi.clearAllMocks();
   });
 
   describe("constructor", () => {

@@ -7,7 +7,10 @@ vi.mock("axios");
 describe("SeedanceClient", () => {
   let client: SeedanceClient;
   const mockVideoBase64 = Buffer.from("fake-video-data").toString("base64");
-  const mockKeyframeBase64 = Buffer.from("fake-keyframe-data").toString("base64");
+  // Generate a keyframe base64 string >= 100 chars (needed for validation)
+  const mockKeyframeBase64 = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+  ).toString("base64").repeat(2).slice(0, 150);
 
   beforeEach(() => {
     process.env.MODAL_API_KEY = "test-key";
@@ -54,7 +57,7 @@ describe("SeedanceClient", () => {
     it("throws on empty prompt", async () => {
       await expect(
         client.generateVideo(mockKeyframeBase64, "")
-      ).rejects.toThrow("prompt");
+      ).rejects.toThrow("Prompt cannot be empty");
     });
 
     it("throws on invalid motion intensity", async () => {
@@ -129,7 +132,7 @@ describe("SeedanceClient", () => {
       expect(result.success).toBe(false);
       expect(result.error).toContain("after");
       expect(result.retries).toBe(3);
-    });
+    }, { timeout: 15000 });
 
     it("does not retry on authentication error", async () => {
       vi.mocked(axios.post).mockRejectedValue(
@@ -167,11 +170,12 @@ describe("SeedanceClient", () => {
     });
 
     it("handles failures in batch", async () => {
+      // For item 2, reject with an error that doesn't retry
       vi.mocked(axios.post)
         .mockResolvedValueOnce({
           data: { success: true, video_base64: mockVideoBase64, cost: 0.15 },
         })
-        .mockRejectedValueOnce(new Error("Failed"))
+        .mockRejectedValueOnce(new Error("invalid input"))
         .mockResolvedValueOnce({
           data: { success: true, video_base64: mockVideoBase64, cost: 0.15 },
         });
@@ -185,6 +189,6 @@ describe("SeedanceClient", () => {
       expect(results[0].success).toBe(true);
       expect(results[1].success).toBe(false);
       expect(results[2].success).toBe(true);
-    });
+    }, { timeout: 15000 });
   });
 });

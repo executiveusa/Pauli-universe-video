@@ -1,30 +1,14 @@
 {
+  "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["ES2020"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "declaration": true,
-    "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "./src",
-    "skipLibCheck": true,
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "allowJs": false
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "bundler"
   },
-  "include": [
-    "src/higgsfield.ts",
-    "src/color-grader.ts",
-    "src/udec-scorer.ts",
-    "src/cost-tracker.ts",
-    "src/infinite-gen.ts",
-    "src/index.ts"
-  ],
-  "exclude": ["__tests__", "node_modules", "src/**/*.test.ts"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts"]
 }

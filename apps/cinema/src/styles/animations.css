@@ -1,0 +1,175 @@
+/* Cinematic Animations */
+
+@keyframes breathingGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.3), inset 0 0 10px rgba(168, 85, 247, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.6), inset 0 0 20px rgba(168, 85, 247, 0.2);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-4px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes filmFlicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  5% {
+    opacity: 0.95;
+  }
+  10% {
+    opacity: 0.98;
+  }
+}
+
+@keyframes pauliEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes videoGeneration {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes successConfetti {
+  0% {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-60px) rotate(360deg);
+  }
+}
+
+/* Utility animation classes */
+.animate-breathingGlow {
+  animation: breathingGlow var(--duration-epic) infinite;
+}
+
+.animate-slideIn {
+  animation: slideIn var(--duration-fast) var(--ease-smooth);
+}
+
+.animate-fadeIn {
+  animation: fadeIn var(--duration-normal) var(--ease-smooth);
+}
+
+.animate-slideUp {
+  animation: slideUp var(--duration-normal) var(--ease-smooth);
+}
+
+.animate-scaleIn {
+  animation: scaleIn var(--duration-fast) var(--ease-smooth);
+}
+
+.animate-pulse {
+  animation: pulse var(--duration-normal) infinite;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-pauliEntrance {
+  animation: pauliEntrance var(--duration-slow) var(--ease-film-out);
+}
+
+.animate-videoGeneration {
+  animation: videoGeneration var(--duration-slow) var(--ease-sharp) forwards;
+}

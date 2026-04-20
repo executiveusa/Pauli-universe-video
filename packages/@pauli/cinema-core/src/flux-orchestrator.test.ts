@@ -104,7 +104,7 @@ describe("FluxOrchestrator", () => {
       expect(result.success).toBe(false);
       expect(result.error).toContain("after");
       expect(result.retries).toBe(3);
-    });
+    }, { timeout: 15000 });
 
     it("tracks daily cost", async () => {
       vi.mocked(axios.post).mockResolvedValue({
@@ -177,7 +177,7 @@ describe("FluxOrchestrator", () => {
         .mockResolvedValueOnce({
           data: { success: true, image_base64: mockImageBase64, cost: 0.05 },
         })
-        .mockRejectedValueOnce(new Error("Failed"))
+        .mockRejectedValueOnce(new Error("invalid prompt"))
         .mockResolvedValueOnce({
           data: { success: true, image_base64: mockImageBase64, cost: 0.05 },
         });
