@@ -16,6 +16,12 @@ export interface Video {
   createdAt: Date;
 }
 
+export interface GenerateRequest {
+  characterId: string;
+  prompt: string;
+  duration: number;
+}
+
 export interface GameState {
   id: string;
   userId: string;

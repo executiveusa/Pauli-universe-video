@@ -1,195 +1,128 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import type { CostTracker } from '@pauli/shared';
+import { COST_PER_VIDEO } from '@pauli/shared';
 
-export interface VideoCost {
-  fluxKeyframe: number;
-  seedanceVideo: number;
-  klingVideo: number;
-  higgsfield: number;
-  colorGrading: number;
-  storage: number;
-  total: number;
+export interface CostEstimate {
+  fluxCost: number;
+  klingCost: number;
+  modalComputeCost: number;
+  colorGradingCost: number;
+  higgsfieldCost: number;
+  infinityCost: number;
+  infrastructureCost: number;
+  totalCost: number;
 }
 
-export interface CostEntry {
-  jobId: string;
-  timestamp: Date;
-  cost: VideoCost;
-  userId?: string;
-  metadata?: Record<string, unknown>;
+export function estimateCost(
+  durationSeconds: number,
+  useColorGrading: boolean = true,
+  useHiggsfield: boolean = true,
+  useInfinity: boolean = false
+): CostEstimate {
+  validateNonNegativeFiniteNumber('estimateCost', 'durationSeconds', durationSeconds);
+  const durationMinutes = durationSeconds / 60;
+
+  const fluxCost = durationMinutes * COST_PER_VIDEO.FLUX_GENERATION;
+  const klingCost = durationMinutes * COST_PER_VIDEO.KLING_RENDERING;
+  const colorGradingCost = useColorGrading ? COST_PER_VIDEO.COLOR_GRADING : 0;
+  const higgsfieldCost = useHiggsfield ? COST_PER_VIDEO.HIGGSFIELD_CONSISTENCY : 0;
+  const infinityCost = useInfinity ? COST_PER_VIDEO.INFINITY_EXTENSION : 0;
+  const infrastructureCost = COST_PER_VIDEO.INFRASTRUCTURE;
+  const modalComputeCost = (fluxCost + klingCost) * 0.1;
+
+  const totalCost =
+    fluxCost +
+    klingCost +
+    colorGradingCost +
+    higgsfieldCost +
+    infinityCost +
+    infrastructureCost +
+    modalComputeCost;
+
+  const computedValues: Record<string, number> = {
+    fluxCost,
+    klingCost,
+    modalComputeCost,
+    colorGradingCost,
+    higgsfieldCost,
+    infinityCost,
+    infrastructureCost,
+    totalCost,
+  };
+
+  for (const [key, value] of Object.entries(computedValues)) {
+    validateNonNegativeFiniteNumber('estimateCost', key, value);
+  }
+
+  return {
+    fluxCost,
+    klingCost,
+    modalComputeCost,
+    colorGradingCost,
+    higgsfieldCost,
+    infinityCost,
+    infrastructureCost,
+    totalCost: Math.round(totalCost * 100) / 100,
+  };
 }
 
-/**
- * Cost tracker for video generation pipeline.
- * Logs costs per job and enforces budget limits.
- */
-export class CostTracker {
-  private supabase: SupabaseClient;
-  private table = "cost_logs";
-  private dailyBudget = 50;
-  private monthlyBudget = 1000;
-  private dailyCost = 0;
-  private monthlyCost = 0;
-  private lastResetDate = new Date();
+export function trackCost(videoId: string, estimate: CostEstimate): CostTracker {
+  const estimateValues: Record<string, number> = {
+    fluxCost: estimate.fluxCost,
+    klingCost: estimate.klingCost,
+    modalComputeCost: estimate.modalComputeCost,
+    colorGradingCost: estimate.colorGradingCost,
+    higgsfieldCost: estimate.higgsfieldCost,
+    infinityCost: estimate.infinityCost,
+    infrastructureCost: estimate.infrastructureCost,
+    totalCost: estimate.totalCost,
+  };
 
-  constructor(
-    supabaseUrl?: string,
-    supabaseKey?: string
-  ) {
-    const url = supabaseUrl || process.env.SUPABASE_URL;
-    const key = supabaseKey || process.env.SUPABASE_KEY;
-
-    if (!url || !key) {
-      throw new Error("SUPABASE_URL and SUPABASE_KEY required");
-    }
-
-    this.supabase = createClient(url, key);
+  for (const [key, value] of Object.entries(estimateValues)) {
+    validateNonNegativeFiniteNumber('trackCost', key, value);
   }
 
-  /**
-   * Log a cost entry.
-   */
-  async logCost(jobId: string, cost: VideoCost, userId?: string): Promise<void> {
-    // Check daily budget
-    if (this.dailyCost + cost.total > this.dailyBudget) {
-      throw new Error(
-        `Daily budget exceeded: $${(this.dailyCost + cost.total).toFixed(2)}/$${this.dailyBudget}`
-      );
-    }
+  return {
+    videoId,
+    fluxCost: estimate.fluxCost,
+    klingCost: estimate.klingCost,
+    modalComputeCost: estimate.modalComputeCost,
+    totalCost: estimate.totalCost,
+    timestamp: new Date(),
+  };
+}
 
-    // Check monthly budget
-    if (this.monthlyCost + cost.total > this.monthlyBudget) {
-      throw new Error(
-        `Monthly budget exceeded: $${(this.monthlyCost + cost.total).toFixed(2)}/$${this.monthlyBudget}`
-      );
-    }
+export function budgetRemaining(spent: number, budget: number): number {
+  validateNonNegativeFiniteNumber('budgetRemaining', 'spent', spent);
+  validateNonNegativeFiniteNumber('budgetRemaining', 'budget', budget);
+  return Math.max(0, budget - spent);
+}
 
-    // Update in-memory tracking
-    this.dailyCost += cost.total;
-    this.monthlyCost += cost.total;
+export function isWithinBudget(spent: number, budget: number): boolean {
+  validateNonNegativeFiniteNumber('isWithinBudget', 'spent', spent);
+  validateNonNegativeFiniteNumber('isWithinBudget', 'budget', budget);
+  return spent <= budget;
+}
 
-    // Log to Supabase
-    const { error } = await this.supabase.from(this.table).insert([
-      {
-        job_id: jobId,
-        timestamp: new Date(),
-        cost: cost,
-        user_id: userId,
-      },
-    ]);
+export function projectedCostForMonth(dailyAverage: number, daysInMonth: number = 30): number {
+  validateNonNegativeFiniteNumber('projectedCostForMonth', 'dailyAverage', dailyAverage);
+  validateNonNegativeFiniteNumber('projectedCostForMonth', 'daysInMonth', daysInMonth);
+  return dailyAverage * daysInMonth;
+}
 
-    if (error) {
-      throw new Error(`Failed to log cost: ${error.message}`);
-    }
+function validateNonNegativeFiniteNumber(
+  functionName: string,
+  argumentName: string,
+  value: number
+): void {
+  if (!Number.isFinite(value)) {
+    throw new Error(
+      `[${functionName}] Invalid ${argumentName}: expected a finite number`
+    );
   }
 
-  /**
-   * Get daily cost.
-   */
-  getDailyCost(): number {
-    return this.dailyCost;
-  }
-
-  /**
-   * Get monthly cost.
-   */
-  getMonthlyCost(): number {
-    return this.monthlyCost;
-  }
-
-  /**
-   * Get remaining daily budget.
-   */
-  getRemainingDailyBudget(): number {
-    return Math.max(0, this.dailyBudget - this.dailyCost);
-  }
-
-  /**
-   * Get remaining monthly budget.
-   */
-  getRemainingMonthlyBudget(): number {
-    return Math.max(0, this.monthlyBudget - this.monthlyCost);
-  }
-
-  /**
-   * Set daily budget.
-   */
-  setDailyBudget(budget: number): void {
-    if (budget <= 0) {
-      throw new Error("Budget must be positive");
-    }
-    this.dailyBudget = budget;
-  }
-
-  /**
-   * Set monthly budget.
-   */
-  setMonthlyBudget(budget: number): void {
-    if (budget <= 0) {
-      throw new Error("Budget must be positive");
-    }
-    this.monthlyBudget = budget;
-  }
-
-  /**
-   * Reset daily cost (call once per day).
-   */
-  resetDailyBudget(): void {
-    this.dailyCost = 0;
-    this.lastResetDate = new Date();
-  }
-
-  /**
-   * Reset monthly cost (call once per month).
-   */
-  resetMonthlyBudget(): void {
-    this.monthlyCost = 0;
-  }
-
-  /**
-   * Get cost summary.
-   */
-  async getSummary(daysBack: number = 1): Promise<{
-    totalCost: number;
-    averagePerJob: number;
-    jobCount: number;
-  }> {
-    const sinceDate = new Date();
-    sinceDate.setDate(sinceDate.getDate() - daysBack);
-
-    const { data, error } = await this.supabase
-      .from(this.table)
-      .select("cost")
-      .gte("timestamp", sinceDate.toISOString());
-
-    if (error) {
-      throw new Error(`Failed to get summary: ${error.message}`);
-    }
-
-    const costs = (data || []).map((row: { cost: VideoCost }) => row.cost);
-    const totalCost = costs.reduce((sum, c) => sum + c.total, 0);
-    const jobCount = costs.length;
-    const averagePerJob = jobCount > 0 ? totalCost / jobCount : 0;
-
-    return {
-      totalCost,
-      averagePerJob,
-      jobCount,
-    };
-  }
-
-  /**
-   * Estimate cost for a job.
-   */
-  estimateCost(components: Partial<VideoCost>): number {
-    return (
-      (components.fluxKeyframe || 0) +
-      (components.seedanceVideo || 0) +
-      (components.klingVideo || 0) +
-      (components.higgsfield || 0) +
-      (components.colorGrading || 0) +
-      (components.storage || 0)
+  if (value < 0) {
+    throw new Error(
+      `[${functionName}] Invalid ${argumentName}: expected a finite number >= 0`
     );
   }
 }
-
-export { CostTracker as default };
