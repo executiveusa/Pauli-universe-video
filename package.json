@@ -20,7 +20,9 @@
     "clean": "turbo clean && rm -rf node_modules pnpm-lock.yaml",
     "deploy": "turbo deploy",
     "dev": "turbo dev --parallel",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "ralphie:loop": "bash scripts/ralphy-loop.sh",
+    "deploy:production": "vercel deploy --prod"
   },
   "workspaces": [
     "packages/*",
