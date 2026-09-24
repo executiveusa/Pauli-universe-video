@@ -13,7 +13,7 @@
   "dependencies": {
     "@pauli/shared": "workspace:*",
     "@pauli/game-engine": "workspace:*",
-    "next": "^16.3.5",
+    "next": "^16.3.6",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
