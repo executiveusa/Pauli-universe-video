@@ -22,12 +22,12 @@
     "format:check": "prettier --check src"
   },
   "dependencies": {
-    "zod": "^4.6.5"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "jest": "^30.5.2",
-    "ts-jest": "^29.4.12",
+    "ts-jest": "^29.4.14",
     "typescript": "^7.0.2"
   }
 }
